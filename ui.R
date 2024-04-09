@@ -26,11 +26,23 @@ dashboardPage(
     tabItems(
       tabItem(
         tabName = "upload_data",
-        fileInput("file1", "Upload a csv file",
-                  multiple = FALSE,
-                  accept = c(".csv")),
-        textInput("sep", label = "Enter the separator character:", value = ","),
+        fluidRow(
+          column(width = 4,
+                 fileInput("file1", "Upload a csv file",
+                           multiple = FALSE,
+                           accept = c(".csv"))),
+          column(width = 4, 
+                 textInput("sep", label = "Enter the separator character:", value = ","))
+        ),
         checkboxInput("header", label = "File contains a header", value = TRUE),
+        fluidRow(
+          column(width = 4,
+                 textInput("condition", label = "Enter column name for comparing conditions:", value = "group")),
+          column(width = 4,
+                 textInput("x_axis_column", label = "Enter column name for x axis:", value = "logfoldchanges")),
+          column(width = 4,
+                 textInput("y_axis_column", label = "Enter column name for y axis:", value = "-log10(pvals_adj)"))
+        ),
         DTOutput(outputId = "data1")
       ),
       tabItem(
