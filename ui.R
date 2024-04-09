@@ -35,6 +35,13 @@ dashboardPage(
       ),
       tabItem(
         tabName = "volcano_plot",
+        plotOutput(outputId = "volcano_plot"),
+        fluidRow(
+          column(width = 8, ""),
+          column(width = 4,
+                 align = "right",
+                 downloadButton("download_plot", "Download Plot"))
+        ),
         fluidRow(
           column(width = 4, 
                  sliderInput("point_size", "Adjust point size:", min = 0.5, max = 3, value = 1, step = 0.5)),
@@ -44,11 +51,18 @@ dashboardPage(
                  sliderInput("p_value_threshold", "P-value Threshold:", min = 0, max = 0.1, value = 0.05, step = 0.01))
         ),
         fluidRow(
-          column(width = 8,
-                 textInput("plot_name", "Enter plot name:", value = "Volcano plot"))
+          column(width = 4,
+                 textInput("plot_name", "Enter plot name:", value = "Volcano plot")),
+          column(width = 4,
+                 textInput("x_axis_name", "Enter x-axis name:", value = "Log Fold Changes")),
+          column(width = 4,
+                 textInput("y_axis_name", "Enter y-axis name:", value = "-log10(Adjusted P-values)"))
         ),
-        downloadButton("download_plot", "Download Plot"),
-        plotOutput(outputId = "volcano_plot")
+        fluidRow(
+          column(width = 4,
+                 checkboxInput("sig_points_label", label = "Show labels for significant genes", value = TRUE))
+        )
+        
       )
     )
   )
