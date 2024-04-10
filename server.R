@@ -15,6 +15,7 @@ library(ggplot2)
 # Function to generate volcano plot
 generate_volcano_plot <- function(df, 
                                   condition,
+                                  gene_names,
                                   x_axis_column,
                                   y_axis_column,
                                   fold_change_threshold, 
@@ -26,8 +27,9 @@ generate_volcano_plot <- function(df,
                                   sig_points_label) {
   # Error handle when the user entered column names that do not exist in the input file
   validate(
-    need(condition %in% colnames(df()), "Error: Specified condition column not found."),
-    need(x_axis_column %in% colnames(df()), "Error: Specified x-axis column not found."),
+    need(gene_names %in% colnames(df()), "Error: Specified column for gene names not found."),
+    need(condition %in% colnames(df()), "Error: Specified column for conditions not found."),
+    need(x_axis_column %in% colnames(df()), "Error: Specified column for x-axis not found."),
     
     # TODO
     # Not working, why?
@@ -37,8 +39,7 @@ generate_volcano_plot <- function(df,
   # TODO: The format of the "-log10(pvals_adj)" became "X.log10.pvals_adj.", can not check if the column name entered by user is in the file or not
   # Check if (y_axis_column != "-log10(pvals_adj)") for now, but need to find a different way
   if (y_axis_column != "-log10(pvals_adj)")  {
-    showNotification("Error: Specified y-axis column not found.", type = "error")
-    return("Error: Specified y-axis column not found.")
+    showNotification("Error: Specified column for y-axis not found.", type = "error")
   }
   
   # Subset data for the 'in' group 
@@ -66,8 +67,8 @@ generate_volcano_plot <- function(df,
   # Label significant genes (up-regulated and down-regulated)
   if (sig_points_label) {
     p <- p +
-      geom_text(data = down, aes(label = names), size = 4, vjust = -1, hjust = 1, color = "blue") +
-      geom_text(data = up, aes(label = names), size = 4, vjust = -1, hjust = 0, color = "red")
+      geom_text(data = down, aes(label = down[[gene_names]]), size = 4, vjust = -1, hjust = 1, color = "blue") +
+      geom_text(data = up, aes(label = up[[gene_names]]), size = 4, vjust = -1, hjust = 0, color = "red")
   }
 
   return(p)
@@ -98,6 +99,7 @@ server <- function(input, output, session) {
     # Then generate the plot when the user uploads a file
     generate_volcano_plot(df, 
                           input$condition,
+                          input$gene_column,
                           input$x_axis_column,
                           input$y_axis_column,
                           input$fold_change_threshold, 
@@ -118,6 +120,7 @@ server <- function(input, output, session) {
       # Generate the plot
       p <- generate_volcano_plot(df, 
                                  input$condition,
+                                 input$gene_column,
                                  input$x_axis_column,
                                  input$y_axis_column,
                                  input$fold_change_threshold, 

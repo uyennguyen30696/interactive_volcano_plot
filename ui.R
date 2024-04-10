@@ -32,12 +32,14 @@ dashboardPage(
                            multiple = FALSE,
                            accept = c(".csv"))),
           column(width = 4, 
-                 textInput("sep", label = "Enter the separator character:", value = ","))
+                 textInput("sep", label = "Enter the separator character:", value = ",")),
+          column(width = 4,
+                 textInput("condition", label = "Enter column name for comparing conditions:", value = "group")),
         ),
         checkboxInput("header", label = "File contains a header", value = TRUE),
         fluidRow(
           column(width = 4,
-                 textInput("condition", label = "Enter column name for comparing conditions:", value = "group")),
+                 textInput("gene_column", label = "Enter column name for genes:", value = "names")),
           column(width = 4,
                  textInput("x_axis_column", label = "Enter column name for x axis:", value = "logfoldchanges")),
           column(width = 4,
