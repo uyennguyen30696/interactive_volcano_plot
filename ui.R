@@ -17,13 +17,15 @@ dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Data", tabName = "upload_data", icon = icon("upload")),
-      menuItem("Volcano Plot", tabName = "volcano_plot", icon = icon("chart-line"))
+      menuItem("Upload Data", tabName = "upload_data", icon = icon("upload")),
+      menuItem("Volcano Plot", tabName = "volcano_plot", icon = icon("chart-line")),
+      menuItem("Significant Genes", tabName = "sig_genes", icon = icon("bolt"))
     )
   ),
   
   dashboardBody(
     tabItems(
+      
       tabItem(
         tabName = "upload_data",
         fluidRow(
@@ -47,6 +49,7 @@ dashboardPage(
         ),
         DTOutput(outputId = "data1")
       ),
+      
       tabItem(
         tabName = "volcano_plot",
         plotOutput(outputId = "volcano_plot"),
@@ -76,8 +79,26 @@ dashboardPage(
           column(width = 4,
                  checkboxInput("sig_points_label", label = "Show labels for significant genes", value = TRUE))
         )
-        
+      ),
+      
+      tabItem(
+        tabName = "sig_genes",
+        fluidRow(
+          column(
+            width = 12,
+            tags$p("Up-regulated Genes"),
+            verbatimTextOutput("up_genes")
+          )
+        ),
+        fluidRow(
+          column(
+            width = 12,
+            tags$p("Down-regulated Genes"),
+            verbatimTextOutput("down_genes")
+          )
+        )
       )
+      
     )
   )
   

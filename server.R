@@ -67,11 +67,14 @@ generate_volcano_plot <- function(df,
   # Label significant genes (up-regulated and down-regulated)
   if (sig_points_label) {
     p <- p +
-      geom_text(data = down, aes(label = down[[gene_names]]), size = 4, vjust = -1, hjust = 1, color = "blue") +
-      geom_text(data = up, aes(label = up[[gene_names]]), size = 4, vjust = -1, hjust = 0, color = "red")
+      geom_text(data = down, aes(label = .data[[gene_names]]), size = 4, vjust = -1, hjust = 1, color = "blue") +
+      geom_text(data = up, aes(label = .data[[gene_names]]), size = 4, vjust = -1, hjust = 0, color = "red")
   }
 
-  return(p)
+  # Return the plot object, down-regulated genes, and up-regulated genes
+  return(list(plot = p, 
+              down_genes = down[[gene_names]], 
+              up_genes = up[[gene_names]]))
   
 }
 
@@ -80,6 +83,10 @@ server <- function(input, output, session) {
   
   # Read the input CSV file once from user upload
   df <- reactiveVal(NULL)
+  # Reactive value to store up-regulated genes
+  up_genes <- reactiveVal(NULL)
+  # Reactive value to store down-regulated genes
+  down_genes <- reactiveVal(NULL)
   
   # Observe changes in the reactive input values from the user and execute corresponding actions
   observeEvent(input$file1, {
@@ -97,7 +104,7 @@ server <- function(input, output, session) {
     req(df())
 
     # Then generate the plot when the user uploads a file
-    generate_volcano_plot(df, 
+    plot_data <- generate_volcano_plot(df, 
                           input$condition,
                           input$gene_column,
                           input$x_axis_column,
@@ -109,6 +116,33 @@ server <- function(input, output, session) {
                           input$x_axis_name, 
                           input$y_axis_name, 
                           input$sig_points_label)
+    
+    # Store up-regulated genes
+    up_genes(plot_data$up_genes)
+    # Store down-regulated genes
+    down_genes(plot_data$down_genes)
+    
+    # Return the plot
+    return(plot_data$plot)
+    
+  })
+  
+  # Display up-regulated genes
+  output$up_genes <- renderText({
+    if (length(up_genes()) > 0) {
+      paste(up_genes(), collapse = ", ")
+    } else {
+      " "
+    }
+  })
+  
+  # Display down-regulated genes
+  output$down_genes <- renderText({
+    if (length(down_genes()) > 0) {
+      paste(down_genes(), collapse = ", ")
+    } else {
+      " "
+    }
   })
   
   # Function to generate plot and serve for download
