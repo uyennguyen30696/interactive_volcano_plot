@@ -148,7 +148,7 @@ server <- function(input, output, session) {
   # Function to generate plot and serve for download
   output$download_plot <- downloadHandler(
     filename = function() {
-      paste0(input$plot_name, ".png")
+      paste0(input$plot_name, input$format)
     },
     content = function(file) {
       # Generate the plot
@@ -166,7 +166,7 @@ server <- function(input, output, session) {
                                  input$sig_points_label)
       
       # Save the plot as PNG file
-      ggsave(file, plot = p, width = 8, height = 6, dpi = 300, bg = "white")
+      ggsave(file, plot = p$plot, width = 8, height = 6, dpi = 300, bg = "white")
     }
   )
   

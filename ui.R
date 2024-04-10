@@ -7,9 +7,8 @@
 #    https://shiny.posit.co/
 #
 
-library(shiny)
-library(shinydashboard)
 library(DT)
+library(shinydashboard)
 
 # Define UI dashboard
 dashboardPage(
@@ -54,10 +53,13 @@ dashboardPage(
         tabName = "volcano_plot",
         plotOutput(outputId = "volcano_plot"),
         fluidRow(
-          column(width = 8, ""),
+          column(width = 6, ""),
           column(width = 4,
                  align = "right",
-                 downloadButton("download_plot", "Download Plot"))
+                 downloadButton("download_plot", "Download Plot")),
+          column(width = 2,
+                 selectInput("format", "Select format:", choices = c(".png", ".jpg", ".jpeg", ".pdf"), selected = ".png")
+          )
         ),
         fluidRow(
           column(width = 4, 
