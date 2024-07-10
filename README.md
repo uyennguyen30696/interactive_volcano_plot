@@ -1,6 +1,6 @@
 # Interactive Volcano Plot
 
-An R shiny web application for interactive volcano plot to visualize pre-processed bioinfomratics data
+An R shiny web application for interactive volcano plot to visualize pre-processed bioinformatics data
 
 ### Screenshots
 
