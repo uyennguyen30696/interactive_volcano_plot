@@ -32,26 +32,25 @@ dashboardPage(
                  fileInput("file1", "Upload a csv file",
                            multiple = FALSE,
                            accept = c(".csv"))),
-          column(width = 4, 
-                 textInput("sep", label = "Enter the separator character:", value = ",")),
           column(width = 4,
-                 textInput("condition", label = "Enter column name for comparing conditions:", value = "group")),
+                 textInput("sep", label = "Enter the separator character:", value = ",")),
         ),
         checkboxInput("header", label = "File contains a header", value = TRUE),
         fluidRow(
           column(width = 4,
-                 textInput("gene_column", label = "Enter column name for genes:", value = "names")),
+                 textInput("gene_column", label = "Enter column name for genes:", value = "Genes")),
           column(width = 4,
-                 textInput("x_axis_column", label = "Enter column name for x axis:", value = "logfoldchanges")),
+                 textInput("x_axis_column", label = "Enter column name for x axis:", value = "logFC")),
           column(width = 4,
-                 textInput("y_axis_column", label = "Enter column name for y axis:", value = "-log10(pvals_adj)"))
+                 textInput("y_axis_column", label = "Enter column name for y axis:", value = "FDR"))
         ),
         DTOutput(outputId = "data1")
       ),
       
       tabItem(
         tabName = "volcano_plot",
-        plotOutput(outputId = "volcano_plot"),
+        # Use plotlyOutput instead of plotOutput to render interactive plot instead of static plot
+        plotlyOutput(outputId = "volcano_plot"),
         fluidRow(
           column(width = 6, ""),
           column(width = 4,
@@ -62,24 +61,24 @@ dashboardPage(
           )
         ),
         fluidRow(
-          column(width = 4, 
+          column(width = 4,
                  sliderInput("point_size", "Adjust point size:", min = 0.5, max = 3, value = 1, step = 0.5)),
-          column(width = 4, 
-                 sliderInput("fold_change_threshold", "Fold Change Threshold:", min = 0, max = 5, value = 2, step = 0.1)),
-          column(width = 4, 
+          column(width = 4,
+                 sliderInput("fold_change_threshold", "Fold Change Threshold:", min = 0, max = 5, value = 1, step = 0.1)),
+          column(width = 4,
                  sliderInput("p_value_threshold", "P-value Threshold:", min = 0, max = 0.1, value = 0.05, step = 0.01))
         ),
         fluidRow(
           column(width = 4,
                  textInput("plot_name", "Enter plot name:", value = "Volcano plot")),
           column(width = 4,
-                 textInput("x_axis_name", "Enter x-axis name:", value = "Log Fold Changes")),
+                 textInput("x_axis_name", "Enter x-axis name:", value = "LogFC")),
           column(width = 4,
-                 textInput("y_axis_name", "Enter y-axis name:", value = "-log10(Adjusted P-values)"))
+                 textInput("y_axis_name", "Enter y-axis name:", value = "-Log10(FDR)"))
         ),
         fluidRow(
           column(width = 4,
-                 checkboxInput("sig_points_label", label = "Show labels for significant genes", value = TRUE))
+                 checkboxInput("sig_points_label", label = "Show labels for significant genes", value = FALSE))
         )
       ),
       
