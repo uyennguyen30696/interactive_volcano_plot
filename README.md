@@ -4,6 +4,8 @@
 
 * The data used for this application is processed with edgeR or DESeq2. More details can be found [here]( https://github.com/uyennguyen30696/BME237).
 
+* [Deployed link](https://uyennguyen30696.shinyapps.io/shiny_app_DEG/)
+
 ### Demo
 
 [Youtube video](https://youtu.be/k3WvXQ2nNAM)
