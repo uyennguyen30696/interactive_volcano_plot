@@ -2,7 +2,7 @@
 
 * An R shiny web application for interactive volcano plot to visualize pre-processed bioinformatics data.
 
-* The data used for this application is processed with edgeR or DESeq2. More details can be found in [here]( https://github.com/uyennguyen30696/BME237).
+* The data used for this application is processed with edgeR or DESeq2. More details can be found [here]( https://github.com/uyennguyen30696/BME237).
 
 ### Demo
 
