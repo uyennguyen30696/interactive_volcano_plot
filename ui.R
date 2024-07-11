@@ -9,6 +9,7 @@
 
 library(DT)
 library(shinydashboard)
+library(plotly)
 
 # Define UI dashboard
 dashboardPage(
