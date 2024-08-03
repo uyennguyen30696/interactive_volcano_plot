@@ -75,19 +75,10 @@ generate_volcano_plot <- function(df,
 # Define server logic
 server <- function(input, output, session) {
   
-  # Read the input CSV file once from user upload
+  # Reactive value to hold the dataframe
   df <- reactiveVal(NULL)
   
-  # Handle file upload
-  observeEvent(input$file1, {
-    req(input$file1)
-    inFile <- input$file1
-    data <- read.csv(inFile$datapath, header = input$header, sep = input$sep)
-    colnames(data)[1] <- "Genes" # Ensure the gene column is named "Genes"
-    df(data)
-  })
-  
-  # Handle "Load Demo Data" 
+  # Load demo data when "Load Demo Data" is selected
   observeEvent(input$data_source, {
     if (input$data_source == "Load Demo Data") {
       demo_data_path <- file.path("data", "dge_brain_9m_vs_24m.csv")
@@ -99,23 +90,42 @@ server <- function(input, output, session) {
         showNotification("Demo data file not found", type = "error")
       }
     }
+  }, ignoreInit = TRUE)
+  
+  # Observe file input changes and update the dataframe
+  observeEvent(input$file1, {
+    req(input$file1)
+    inFile <- input$file1
+    data <- read.csv(inFile$datapath, header = input$header, sep = input$sep)
+    colnames(data)[1] <- "Genes" # Ensure the gene column is named "Genes"
+    df(data)
+  })
+  
+  # Reset inputs when the data source is changed
+  observeEvent(input$data_source, {
+    updateTextInput(session, "gene_column", value = "Genes")
+    updateTextInput(session, "x_axis_column", value = "logFC")
+    updateTextInput(session, "y_axis_column", value = "FDR")
+    updateSliderInput(session, "point_size", value = 1)
+    updateSliderInput(session, "fold_change_threshold", value = 1)
+    updateSliderInput(session, "p_value_threshold", value = 0.05)
+    updateTextInput(session, "plot_name", value = "Volcano plot")
+    updateTextInput(session, "x_axis_name", value = "LogFC")
+    updateTextInput(session, "y_axis_name", value = "-Log10(FDR)")
+    updateCheckboxInput(session, "sig_points_label", value = FALSE)
   })
   
   # Render data table
   output$data1 <- renderDT({
-    # Ensure the data is loaded before display
     req(df())
     datatable(df())
   })
   
   # Render volcano plot
   output$volcano_plot <- renderPlotly({
-    # Silent the error of empty object before the user upload a file
-    # Ensure the data is loaded before display
     req(df())
     req(input$gene_column, input$x_axis_column, input$y_axis_column)
     
-    # Generate the plot when the user uploads a file
     plot_data <- generate_volcano_plot(
       df = df(),
       genes = input$gene_column,
@@ -130,17 +140,15 @@ server <- function(input, output, session) {
       sig_points_label = input$sig_points_label
     )
     
-    # Use this function from plotly to create interactive plot
     ggplotly(plot_data$plot)
   })
   
-  # For download, the plot has to be generated again this function, can not use the plot in the previous function
+  # Download plot
   output$download_plot <- downloadHandler(
     filename = function() {
       paste0(input$plot_name, input$format)
     },
     content = function(file) {
-      # Re-render the volcano plot
       plot_data <- generate_volcano_plot(
         df = df(),
         genes = input$gene_column,
@@ -155,7 +163,6 @@ server <- function(input, output, session) {
         sig_points_label = input$sig_points_label
       )
       
-      # Save the plot as a chosen file type
       ggsave(file, plot = plot_data$plot, width = 8, height = 6, dpi = 300, bg = "white")
     }
   )
@@ -177,7 +184,6 @@ server <- function(input, output, session) {
       sig_points_label = input$sig_points_label
     )
     
-    # Join the gene names with commas and return as plain text
     paste(plot_data$up_genes, collapse = ", ")
   })
   
@@ -198,8 +204,6 @@ server <- function(input, output, session) {
       sig_points_label = input$sig_points_label
     )
     
-    # Join the gene names with commas and return as plain text
     paste(plot_data$down_genes, collapse = ", ")
   })
-  
 }
