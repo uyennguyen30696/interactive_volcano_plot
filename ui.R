@@ -7,12 +7,13 @@
 #    https://shiny.posit.co/
 #
 
+library(shiny)
 library(DT)
-library(shinydashboard)
 library(plotly)
+library(shinydashboard)
 
-# Define UI dashboard
-dashboardPage(
+# Define UI
+ui <- dashboardPage(
   dashboardHeader(title = "Interactive Volcano Plot"),
   
   dashboardSidebar(
@@ -41,9 +42,14 @@ dashboardPage(
         tabName = "upload_data",
         fluidRow(
           column(width = 4,
-                 fileInput("file1", "Upload a csv file",
-                           multiple = FALSE,
-                           accept = c(".csv"))),
+                 selectInput("data_source", "Choose Data Source",
+                             choices = c("Select", "Load Demo Data", "Upload CSV File"))),
+          conditionalPanel(
+            condition = "input.data_source == 'Upload CSV File'",
+            column(width = 4,
+                   fileInput("file1", "Browse", multiple = FALSE, accept = c(".csv")) 
+            )
+          ),
           column(width = 4,
                  textInput("sep", label = "Enter the separator character:", value = ",")),
         ),
@@ -61,7 +67,6 @@ dashboardPage(
       
       tabItem(
         tabName = "volcano_plot",
-        # Use plotlyOutput instead of plotOutput to render interactive plot instead of static plot
         plotlyOutput(outputId = "volcano_plot"),
         fluidRow(
           column(width = 6, ""),
@@ -111,8 +116,6 @@ dashboardPage(
           )
         )
       )
-      
     )
   )
-  
 )
