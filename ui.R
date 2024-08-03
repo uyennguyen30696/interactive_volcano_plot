@@ -17,6 +17,7 @@ dashboardPage(
   
   dashboardSidebar(
     sidebarMenu(
+      menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Upload Data", tabName = "upload_data", icon = icon("upload")),
       menuItem("Volcano Plot", tabName = "volcano_plot", icon = icon("chart-line")),
       menuItem("Significant Genes", tabName = "sig_genes", icon = icon("bolt"))
@@ -25,6 +26,16 @@ dashboardPage(
   
   dashboardBody(
     tabItems(
+      
+      tabItem(
+        tabName = "home",
+        fluidRow(
+          column(width = 12,
+                 h2("Welcome to Interactive Volcano Plot", align = "center"),
+                 tags$img(src = "volcano-DecorativeWorld-PixaBay.png", 
+                          style = "display: block; margin: 0 auto; width: 700px; height: auto;", alt = "Volcano Image"))
+        )
+      ),
       
       tabItem(
         tabName = "upload_data",
