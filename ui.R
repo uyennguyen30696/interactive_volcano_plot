@@ -33,6 +33,7 @@ ui <- dashboardPage(
         fluidRow(
           column(width = 12,
                  h2("Welcome to Interactive Volcano Plot", align = "center"),
+                 h4("Erupt the volcano with demo data or upload your own.", align = "center"),
                  tags$img(src = "volcano-DecorativeWorld-PixaBay.png", 
                           style = "display: block; margin: 0 auto; width: 700px; height: auto;", alt = "Volcano Image"))
         )
