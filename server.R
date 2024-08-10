@@ -95,7 +95,9 @@ server <- function(input, output, session) {
   # Download plot
   output$download_plot <- downloadHandler(
     filename = function() {
-      paste0(input$plot_name, input$format)
+      # Get the current date
+      date <- Sys.Date()
+      paste0(input$plot_name, "_", date, input$format)
     },
     content = function(file) {
       plot_data <- generate_plot_data()
@@ -114,5 +116,31 @@ server <- function(input, output, session) {
     plot_data <- generate_plot_data()
     datatable(plot_data$down_genes_df)
   })
+  
+  # Download up-regulated genes
+  output$download_up_genes <- downloadHandler(
+    filename = function() {
+      # Get the current date
+      date <- Sys.Date()
+      paste0("up_regulated_genes", "_", date, ".csv")
+    },
+    content = function(file) {
+      plot_data <- generate_plot_data()
+      write.csv(plot_data$up_genes_df, file, row.names = FALSE)
+    }
+  )
+  
+  # Download down-regulated genes
+  output$download_down_genes <- downloadHandler(
+    filename = function() {
+      # Get the current date
+      date <- Sys.Date()
+      paste0("down_regulated_genes", "_", date, ".csv")
+    },
+    content = function(file) {
+      plot_data <- generate_plot_data()
+      write.csv(plot_data$down_genes_df, file, row.names = FALSE)
+    }
+  )
   
 }

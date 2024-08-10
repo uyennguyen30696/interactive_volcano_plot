@@ -105,18 +105,27 @@ ui <- dashboardPage(
         fluidRow(
           column(
             width = 12,
-            h3(tags$strong("Up-regulated Genes")),
+            div(
+              style = "display: flex; align-items: center;",
+              h3(tags$strong("Up-regulated Genes", style = "color: red; margin-right: 10px;")),
+              downloadButton("download_up_genes", "Download CSV")
+            ),
             DTOutput("up_genes_table")
           )
         ),
         fluidRow(
           column(
             width = 12,
-            h3(tags$strong("Down-regulated Genes")),
+            div(
+              style = "display: flex; align-items: center;",
+              h3(tags$strong("Down-regulated Genes", style = "color: blue; margin-right: 10px;")),
+              downloadButton("download_down_genes", "Download CSV")
+            ),
             DTOutput("down_genes_table")
           )
         )
       )
+      
     )
   )
 )
