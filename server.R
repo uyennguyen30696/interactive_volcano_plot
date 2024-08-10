@@ -23,6 +23,20 @@ server <- function(input, output, session) {
   # Reactive value to hold the dataframe
   df <- reactiveVal(NULL)
   
+  # Reset inputs function
+  reset_inputs <- function() {
+    updateTextInput(session, "gene_column", value = "Genes")
+    updateTextInput(session, "x_axis_column", value = "logFC")
+    updateTextInput(session, "y_axis_column", value = "FDR")
+    updateSliderInput(session, "point_size", value = 1)
+    updateSliderInput(session, "fold_change_threshold", value = 1)
+    updateSliderInput(session, "p_value_threshold", value = 0.05)
+    updateTextInput(session, "plot_name", value = "Volcano plot")
+    updateTextInput(session, "x_axis_name", value = "LogFC")
+    updateTextInput(session, "y_axis_name", value = "-Log10(FDR)")
+    updateCheckboxInput(session, "sig_points_label", value = FALSE)
+  }
+  
   # Load demo data when "Load Demo Data" is selected
   observeEvent(input$data_source, {
     if (input$data_source == "Load Demo Data") {
@@ -31,6 +45,7 @@ server <- function(input, output, session) {
         demo_data <- read.csv(demo_data_path, header = TRUE, sep = ",")
         colnames(demo_data)[1] <- "Genes" # Ensure the gene column is named "Genes"
         df(demo_data)
+        reset_inputs()  # Reset inputs when demo data is loaded
       } else {
         showNotification("Demo data file not found", type = "error")
       }
@@ -44,20 +59,7 @@ server <- function(input, output, session) {
     data <- read.csv(inFile$datapath, header = input$header, sep = input$sep)
     colnames(data)[1] <- "Genes" # Ensure the gene column is named "Genes"
     df(data)
-  })
-  
-  # Reset inputs when the data source is changed
-  observeEvent(input$data_source, {
-    updateTextInput(session, "gene_column", value = "Genes")
-    updateTextInput(session, "x_axis_column", value = "logFC")
-    updateTextInput(session, "y_axis_column", value = "FDR")
-    updateSliderInput(session, "point_size", value = 1)
-    updateSliderInput(session, "fold_change_threshold", value = 1)
-    updateSliderInput(session, "p_value_threshold", value = 0.05)
-    updateTextInput(session, "plot_name", value = "Volcano plot")
-    updateTextInput(session, "x_axis_name", value = "LogFC")
-    updateTextInput(session, "y_axis_name", value = "-Log10(FDR)")
-    updateCheckboxInput(session, "sig_points_label", value = FALSE)
+    reset_inputs()  # Reset inputs when a new file is uploaded
   })
   
   # Function to generate the volcano plot
@@ -142,5 +144,4 @@ server <- function(input, output, session) {
       write.csv(plot_data$down_genes_df, file, row.names = FALSE)
     }
   )
-  
 }
