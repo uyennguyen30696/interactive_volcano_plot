@@ -60,18 +60,12 @@ server <- function(input, output, session) {
     updateCheckboxInput(session, "sig_points_label", value = FALSE)
   })
   
-  # Render data table
-  output$data1 <- renderDT({
-    req(df())
-    datatable(df())
-  })
-  
-  # Render volcano plot
-  output$volcano_plot <- renderPlotly({
+  # Function to generate the volcano plot
+  generate_plot_data <- reactive({
     req(df())
     req(input$gene_column, input$x_axis_column, input$y_axis_column)
     
-    plot_data <- generate_volcano_plot(
+    generate_volcano_plot(
       df = df(),
       genes = input$gene_column,
       logFC = input$x_axis_column,
@@ -84,7 +78,17 @@ server <- function(input, output, session) {
       y_axis_name = input$y_axis_name,
       sig_points_label = input$sig_points_label
     )
-    
+  })
+  
+  # Render data table
+  output$data1 <- renderDT({
+    req(df())
+    datatable(df())
+  })
+  
+  # Render volcano plot
+  output$volcano_plot <- renderPlotly({
+    plot_data <- generate_plot_data()
     ggplotly(plot_data$plot)
   })
   
@@ -94,61 +98,20 @@ server <- function(input, output, session) {
       paste0(input$plot_name, input$format)
     },
     content = function(file) {
-      plot_data <- generate_volcano_plot(
-        df = df(),
-        genes = input$gene_column,
-        logFC = input$x_axis_column,
-        FDR = input$y_axis_column,
-        fold_change_threshold = input$fold_change_threshold,
-        p_value_threshold = input$p_value_threshold,
-        point_size = input$point_size,
-        plot_name = input$plot_name,
-        x_axis_name = input$x_axis_name,
-        y_axis_name = input$y_axis_name,
-        sig_points_label = input$sig_points_label
-      )
-      
+      plot_data <- generate_plot_data()
       ggsave(file, plot = plot_data$plot, width = 8, height = 6, dpi = 300, bg = "white")
     }
   )
   
   # Render up-regulated genes data table
   output$up_genes_table <- renderDT({
-    req(df())
-    plot_data <- generate_volcano_plot(
-      df = df(),
-      genes = input$gene_column,
-      logFC = input$x_axis_column,
-      FDR = input$y_axis_column,
-      fold_change_threshold = input$fold_change_threshold,
-      p_value_threshold = input$p_value_threshold,
-      point_size = input$point_size,
-      plot_name = input$plot_name,
-      x_axis_name = input$x_axis_name,
-      y_axis_name = input$y_axis_name,
-      sig_points_label = input$sig_points_label
-    )
-    
+    plot_data <- generate_plot_data()
     datatable(plot_data$up_genes_df)
   })
   
   # Render down-regulated genes data table
   output$down_genes_table <- renderDT({
-    req(df())
-    plot_data <- generate_volcano_plot(
-      df = df(),
-      genes = input$gene_column,
-      logFC = input$x_axis_column,
-      FDR = input$y_axis_column,
-      fold_change_threshold = input$fold_change_threshold,
-      p_value_threshold = input$p_value_threshold,
-      point_size = input$point_size,
-      plot_name = input$plot_name,
-      x_axis_name = input$x_axis_name,
-      y_axis_name = input$y_axis_name,
-      sig_points_label = input$sig_points_label
-    )
-    
+    plot_data <- generate_plot_data()
     datatable(plot_data$down_genes_df)
   })
   
