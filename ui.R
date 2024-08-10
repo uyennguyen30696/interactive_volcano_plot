@@ -33,7 +33,7 @@ ui <- dashboardPage(
         fluidRow(
           column(width = 12,
                  h2("Welcome to Interactive Volcano Plot", align = "center"),
-                 h4("Erupt the volcano with demo data or upload your own.", align = "center"),
+                 h3("Erupt the volcano with demo data or upload your own.", align = "center"),
                  tags$img(src = "volcano-DecorativeWorld-PixaBay.png", 
                           style = "display: block; margin: 0 auto; width: 700px; height: auto;", alt = "Volcano Image"))
         )
@@ -105,15 +105,15 @@ ui <- dashboardPage(
         fluidRow(
           column(
             width = 12,
-            tags$p("Up-regulated Genes"),
-            verbatimTextOutput("up_genes")
+            h3(tags$strong("Up-regulated Genes")),
+            DTOutput("up_genes_table")
           )
         ),
         fluidRow(
           column(
             width = 12,
-            tags$p("Down-regulated Genes"),
-            verbatimTextOutput("down_genes")
+            h3(tags$strong("Down-regulated Genes")),
+            DTOutput("down_genes_table")
           )
         )
       )

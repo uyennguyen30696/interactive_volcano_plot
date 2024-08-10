@@ -1,4 +1,3 @@
-# volcano_plot.R
 library(dplyr)
 library(ggplot2)
 
@@ -44,6 +43,10 @@ generate_volcano_plot <- function(df,
     theme_minimal() +
     theme(plot.title = element_text(hjust = 0.5)) # Centered title
   
+  # Filter out NA values 
+  DE_res <- DE_res %>%
+    filter(!is.na(.data[[genes]]) & !is.na(.data[[logFC]]) & !is.na(.data[[FDR]]) & !is.na(.data[["PValue"]]))
+  
   # Subset for down-regulated and up-regulated genes
   up <- DE_res[DE_res[[logFC]] >= fold_change_threshold & DE_res[[FDR]] <= p_value_threshold,]
   down <- DE_res[DE_res[[logFC]] <= -fold_change_threshold & DE_res[[FDR]] <= p_value_threshold,]
@@ -55,7 +58,14 @@ generate_volcano_plot <- function(df,
       geom_text(data = down, aes(label = .data[[genes]]), size = 3, vjust = -1, hjust = 1, color = "blue")
   }
   
+  # Save the up and down genes along with their statistical values
+  down_genes_df <- down[, c(genes, logFC, "PValue", FDR)]
+  colnames(down_genes_df) <- c("Genes", "logFC", "PValue", "FDR")
+  
+  up_genes_df <- up[, c(genes, logFC, "PValue", FDR)]
+  colnames(up_genes_df) <- c("Genes", "logFC", "PValue", "FDR")
+  
   return(list(plot = p, 
-              down_genes = down[[genes]], 
-              up_genes = up[[genes]]))
+              down_genes_df = down_genes_df, 
+              up_genes_df = up_genes_df))
 }

@@ -112,8 +112,8 @@ server <- function(input, output, session) {
     }
   )
   
-  # Render up-regulated genes as a comma-separated string
-  output$up_genes <- renderText({
+  # Render up-regulated genes data table
+  output$up_genes_table <- renderDT({
     req(df())
     plot_data <- generate_volcano_plot(
       df = df(),
@@ -129,11 +129,11 @@ server <- function(input, output, session) {
       sig_points_label = input$sig_points_label
     )
     
-    paste(plot_data$up_genes, collapse = ", ")
+    datatable(plot_data$up_genes_df)
   })
   
-  # Render down-regulated genes as a comma-separated string
-  output$down_genes <- renderText({
+  # Render down-regulated genes data table
+  output$down_genes_table <- renderDT({
     req(df())
     plot_data <- generate_volcano_plot(
       df = df(),
@@ -149,6 +149,7 @@ server <- function(input, output, session) {
       sig_points_label = input$sig_points_label
     )
     
-    paste(plot_data$down_genes, collapse = ", ")
+    datatable(plot_data$down_genes_df)
   })
+  
 }
